@@ -16,5 +16,23 @@
         "displayName": "Arsalan Alam",
         "bio": "Hello! I am new here.",
         "joined": "2026-04-24 11:53:40"
+    },
+    "test32@gmail.com": {
+        "password": "12334",
+        "displayName": "test24",
+        "bio": "Hello! I am new here.",
+        "joined": "2026-04-24 02:55:07"
+    },
+    "test3e22@gmail.com": {
+        "password": "12334",
+        "displayName": "test2423e2q",
+        "bio": "Hello! I am new here.",
+        "joined": "2026-04-24 02:58:31"
+    },
+    "syncbot@test.com": {
+        "password": "password123",
+        "displayName": "SyncBot",
+        "bio": "Hello! I am new here.",
+        "joined": "2026-04-24 03:04:32"
     }
 }
