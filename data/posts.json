@@ -1,0 +1,37 @@
+[
+    {
+        "id": "13ddee46-5df5-4bf9-a64c-be736573a729",
+        "author": "arsalanalam76689@gmail.com",
+        "displayName": "Arsalan Alam",
+        "content": "Hello World",
+        "timestamp": "2026-04-24 11:53:58",
+        "likes": [],
+        "dislikes": []
+    },
+    {
+        "id": "315167c7-3fa5-4772-95d6-58caeb44def7",
+        "author": "test2@gmail.com",
+        "displayName": "test2",
+        "content": "hi guys",
+        "timestamp": "2026-04-24 11:52:47",
+        "likes": [
+            "arsalanalam76689@gmail.com"
+        ],
+        "dislikes": [
+            "test2@gmail.com"
+        ]
+    },
+    {
+        "id": "2c48707d-a10e-4243-956c-12afd7f75dc7",
+        "author": "test@gmail.com",
+        "displayName": "Test",
+        "content": "{test message}",
+        "timestamp": "2026-04-24 11:52:01",
+        "likes": [
+            "test@gmail.com",
+            "test2@gmail.com",
+            "arsalanalam76689@gmail.com"
+        ],
+        "dislikes": []
+    }
+]

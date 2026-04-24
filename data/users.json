@@ -1,0 +1,20 @@
+{
+    "test@gmail.com": {
+        "password": "123",
+        "displayName": "Test",
+        "bio": "Hello guys",
+        "joined": "2026-04-24 11:51:50"
+    },
+    "test2@gmail.com": {
+        "password": "1234",
+        "displayName": "test2",
+        "bio": "Hello! I am new here.",
+        "joined": "2026-04-24 11:52:39"
+    },
+    "arsalanalam76689@gmail.com": {
+        "password": "7668981998alam",
+        "displayName": "Arsalan Alam",
+        "bio": "Hello! I am new here.",
+        "joined": "2026-04-24 11:53:40"
+    }
+}
