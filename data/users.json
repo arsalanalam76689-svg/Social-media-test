@@ -37,8 +37,8 @@
     },
     "bot@gmail.com": {
         "password": "123",
-        "displayName": "Bot",
-        "bio": "Hello! I am new here.",
+        "displayName": "BOT",
+        "bio": "I am a bot",
         "joined": "2026-04-24 03:05:43"
     }
 }
