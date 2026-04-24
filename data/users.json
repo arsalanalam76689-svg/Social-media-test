@@ -34,5 +34,11 @@
         "displayName": "SyncBot",
         "bio": "Hello! I am new here.",
         "joined": "2026-04-24 03:04:32"
+    },
+    "bot@gmail.com": {
+        "password": "123",
+        "displayName": "Bot",
+        "bio": "Hello! I am new here.",
+        "joined": "2026-04-24 03:05:43"
     }
 }
