@@ -5,7 +5,9 @@
         "displayName": "BOT",
         "content": "hi",
         "timestamp": "2026-04-24 03:05:48",
-        "likes": [],
+        "likes": [
+            "bot@gmail.com"
+        ],
         "dislikes": []
     },
     {
