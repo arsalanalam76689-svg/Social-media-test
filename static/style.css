@@ -1,68 +1,137 @@
-:root {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --text-main: #ffffff;
-    --text-muted: #b3b3b3;
-    --accent: #1da1f2;
-    --accent-hover: #1a91da;
-    --danger: #e0245e;
-    --border: #333333;
+let currentUser = JSON.parse(localStorage.getItem('echo_user')) || null;
+const app = document.getElementById('app');
+
+// Initialize view
+async function init() {
+    if (currentUser) {
+        document.getElementById('navbar').classList.remove('hidden');
+        renderFeed();
+    } else {
+        document.getElementById('navbar').classList.add('hidden');
+        renderLogin();
+    }
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-
-body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; }
-
-.hidden { display: none !important; }
-
-/* Navbar */
-nav { background-color: var(--card-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-.nav-content { max-width: 800px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-.nav-content h2 { color: var(--accent); cursor: pointer; }
-.nav-links button { background: none; border: none; color: var(--text-main); font-size: 16px; margin-left: 15px; cursor: pointer; transition: color 0.2s; }
-.nav-links button:hover { color: var(--accent); }
-
-/* Main Container */
-main { max-width: 800px; margin: 30px auto; padding: 0 20px; }
-
-/* Auth Forms */
-.auth-container { max-width: 400px; margin: 100px auto; background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); }
-.auth-container h1 { text-align: center; margin-bottom: 20px; }
-input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: var(--bg-color); border: 1px solid var(--border); color: var(--text-main); border-radius: 8px; font-size: 16px; transition: border 0.3s; }
-input:focus, textarea:focus { border-color: var(--accent); outline: none; }
-.btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
-.btn:hover { background: var(--accent-hover); }
-.switch-auth { text-align: center; margin-top: 15px; color: var(--text-muted); cursor: pointer; }
-.switch-auth:hover { color: var(--text-main); }
-
-/* Feed & Posts */
-.create-post { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid var(--border); }
-.create-post textarea { resize: none; height: 80px; }
-
-.search-bar { margin-bottom: 20px; }
-
-.post-card { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid var(--border); animation: fadeIn 0.4s ease; }
-.post-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-.post-author { font-weight: bold; font-size: 18px; }
-.post-username { color: var(--text-muted); font-size: 14px; margin-left: 5px; }
-.post-time { color: var(--text-muted); font-size: 12px; }
-.post-content { font-size: 16px; margin-bottom: 15px; white-space: pre-wrap; }
-
-.post-actions { display: flex; gap: 15px; border-top: 1px solid var(--border); padding-top: 10px; }
-.action-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px; transition: color 0.2s; }
-.action-btn:hover { color: var(--accent); }
-.action-btn.delete:hover { color: var(--danger); }
-
-/* Profile */
-.profile-header { background: var(--card-bg); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px; border: 1px solid var(--border); }
-.avatar { width: 80px; height: 80px; background: var(--accent); color: white; font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto 15px; }
-.profile-stats { display: flex; justify-content: center; gap: 30px; margin-top: 20px; }
-.stat { text-align: center; }
-.stat-val { font-size: 20px; font-weight: bold; color: var(--accent); }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-@media (max-width: 600px) {
-    .nav-content { flex-direction: column; gap: 10px; }
-    main { margin: 15px auto; }
+// Global API Helper
+async function api(path, method = 'GET', body = null) {
+    const options = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body) options.body = JSON.stringify(body);
+    const res = await fetch(`/api/${path}`, options);
+    return res.json();
 }
+
+/* --- Views --- */
+function renderLogin() {
+    app.innerHTML = `
+        <div class="auth-container animate-in">
+            <h1 class="logo" style="font-size: 3rem; margin-bottom: 20px;">Echo.</h1>
+            <input type="text" id="user" placeholder="Username">
+            <input type="password" id="pass" placeholder="Password">
+            <button class="btn" onclick="handleAuth('login')">Sign In</button>
+            <p onclick="renderSignup()" style="margin-top: 20px; cursor: pointer; color: var(--accent)">Create an account</p>
+        </div>
+    `;
+}
+
+async function renderFeed() {
+    app.innerHTML = `
+        <div class="card animate-in">
+            <textarea id="post-text" placeholder="What's happening?"></textarea>
+            <div style="text-align: right">
+                <button class="btn" onclick="createPost()">Post</button>
+            </div>
+        </div>
+        <div id="feed-container"></div>
+    `;
+    const posts = await api('posts');
+    const container = document.getElementById('feed-container');
+    
+    container.innerHTML = posts.map((p, index) => `
+        <div class="card post-card animate-in" style="animation-delay: ${index * 0.1}s">
+            <div class="post-header">
+                <span class="display-name" onclick="renderProfile('${p.author}')">${p.displayName}</span>
+                <span class="username">@${p.author} • ${p.timestamp}</span>
+            </div>
+            <div class="content">${p.content}</div>
+            <div class="actions">
+                <button class="action-btn" onclick="react('${p.id}', 'like')">❤️ ${p.likes.length}</button>
+                <button class="action-btn" onclick="react('${p.id}', 'dislike')">👎 ${p.dislikes.length}</button>
+                <button class="action-btn" onclick="toggleComments('${p.id}')">💬 ${p.comments.length}</button>
+            </div>
+            <div id="comments-${p.id}" class="comment-section hidden">
+                <div id="list-${p.id}">
+                    ${p.comments.map(c => `
+                        <div class="comment-pill">
+                            <div class="comment-meta"><strong>${c.displayName}</strong> • ${c.timestamp}</div>
+                            ${c.content}
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="comment-input-group">
+                    <input type="text" id="input-${p.id}" placeholder="Write a comment...">
+                    <button class="btn" style="padding: 8px 15px;" onclick="addComment('${p.id}')">Reply</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+/* --- Actions --- */
+async function createPost() {
+    const content = document.getElementById('post-text').value;
+    if (!content.trim()) return;
+    await api('posts', 'POST', { username: currentUser.username, content });
+    renderFeed();
+}
+
+async function addComment(postId) {
+    const input = document.getElementById(`input-${postId}`);
+    if (!input.value.trim()) return;
+    
+    await api(`posts/${postId}/comment`, 'POST', {
+        username: currentUser.username,
+        content: input.value
+    });
+    renderFeed(); // Refresh to show new comment
+}
+
+function toggleComments(id) {
+    document.getElementById(`comments-${id}`).classList.toggle('hidden');
+}
+
+async function handleAuth(type) {
+    const username = document.getElementById('user').value;
+    const password = document.getElementById('pass').value;
+    const displayName = type === 'signup' ? document.getElementById('name').value : '';
+    
+    const res = await api('auth', 'POST', { action: type, username, password, displayName });
+    if (res.success) {
+        currentUser = res.user;
+        localStorage.setItem('echo_user', JSON.stringify(currentUser));
+        init();
+    } else alert(res.error);
+}
+
+function logout() {
+    localStorage.removeItem('echo_user');
+    location.reload();
+}
+
+async function renderProfile(username) {
+    const p = await api(`profile/${username}`);
+    app.innerHTML = `
+        <button class="btn" style="margin-bottom: 20px" onclick="renderFeed()">← Back</button>
+        <div class="profile-hero animate-in">
+            <div class="avatar-large">${p.displayName[0]}</div>
+            <h1>${p.displayName}</h1>
+            <p class="username">@${p.username}</p>
+            <p style="margin: 15px 0;">${p.bio}</p>
+            <div class="stat-grid">
+                <div class="stat-item"><strong>${p.postCount}</strong><br>Posts</div>
+                <div class="stat-item"><strong>${p.likesReceived}</strong><br>Likes</div>
+            </div>
+        </div>
+    `;
+}
+
+init();
